@@ -4,6 +4,16 @@ import { useAuthStore } from '@/stores/auth'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    // ── Root: redirect based on auth state ───────────────────
+    {
+      path: '/',
+      name: 'home',
+      redirect: () => {
+        const auth = useAuthStore()
+        return auth.isApproved ? { name: 'list' } : { name: 'login' }
+      },
+    },
+
     // ── Public ────────────────────────────────────────────────
     {
       path: '/login',

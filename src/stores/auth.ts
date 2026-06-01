@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import { getSupabase } from '@/lib/supabase'
 
 // Roles in ascending access order:
 // guest -> pending -> approved -> manager -> super_admin
@@ -27,6 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function init() {
     if (initialized.value) return
+    const supabase = getSupabase()
     const { data } = await supabase.auth.getSession()
     user.value = data.session?.user ?? null
     role.value = user.value ? resolveRole(user.value) : 'guest'
@@ -40,7 +41,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function signOut() {
-    await supabase.auth.signOut()
+    await getSupabase().auth.signOut()
     user.value = null
     role.value = 'guest'
   }
